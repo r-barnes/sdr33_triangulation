@@ -30,7 +30,6 @@
 #TV: Traverse program
 
 import sys
-from math import *
 import math
 
 def atan_in_circle(x,y):
@@ -41,7 +40,7 @@ def atan_in_circle(x,y):
   elif x<0 and y==0:
     return 270
 
-  t=abs(atan(x/y))*180/pi #'cause we work in degrees
+  t=abs(math.atan(x/y))*180/math.pi #'cause we work in degrees
   if x>0 and y>0:
     return t
   elif x>0 and y<0:
@@ -52,7 +51,7 @@ def atan_in_circle(x,y):
     return 360-t
 
 def ang_in_circle(ang):
-  return ang - 360.0*floor(ang/360.0)
+  return ang - 360.0*math.floor(ang/360.0)
 
 def ang_in_hemicircle(ang):
   ang=ang_in_circle(ang)
@@ -249,7 +248,7 @@ class SDRFile:
 
     xd   =s2.getEasting() -s1.getEasting()
     yd   =s2.getNorthing()-s1.getNorthing()
-    dist =sqrt(xd**2+yd**2)
+    dist =math.sqrt(xd**2+yd**2)
     s1_s2=atan_in_circle(xd,yd)
     ts1  =ang_in_hemicircle(t1.getH()-s1_s2)
     ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(180+s1_s2))
@@ -258,14 +257,14 @@ class SDRFile:
 #    print "Target 1:\t" + str(t1.getH()) + ", Interior 1:\t" + str(ts1)
 #    print "Target 2:\t" + str(t2.getH()) + ", Interior 2:\t" + str(ts2)
 #    print "Unknown:\t" + str(inta)
-    ts1d =sin(ts2*pi/180)/sin(inta*pi/180)*dist
-    ts2d =sin(ts1*pi/180)/sin(inta*pi/180)*dist
+    ts1d =math.sin(ts2*math.pi/180)/math.sin(inta*math.pi/180)*dist
+    ts2d =math.sin(ts1*math.pi/180)/math.sin(inta*math.pi/180)*dist
 #    print "S1-Target Dist: " + str(ts1d)
 #    print "S2-Target Dist: " + str(ts2d)
-    s1x  =s1.getEasting() +ts1d*sin(t1.getH()*pi/180)
-    s1y  =s1.getNorthing()+ts1d*cos(t1.getH()*pi/180)
-    s2x  =s2.getEasting() +ts2d*sin(t2.getH()*pi/180)
-    s2y  =s2.getNorthing()+ts2d*cos(t2.getH()*pi/180)
+    s1x  =s1.getEasting() +ts1d*math.sin(t1.getH()*math.pi/180)
+    s1y  =s1.getNorthing()+ts1d*math.cos(t1.getH()*math.pi/180)
+    s2x  =s2.getEasting() +ts2d*math.sin(t2.getH()*math.pi/180)
+    s2y  =s2.getNorthing()+ts2d*math.cos(t2.getH()*math.pi/180)
 #    print "S1 Loc Projection: (" + str(s1x) + "," + str(s1y) + ")"
 #    print "S2 Loc Projection: (" + str(s2x) + "," + str(s2y) + ")"
     print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
