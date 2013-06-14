@@ -31,6 +31,7 @@
 
 import sys
 from math import *
+import math
 
 def atan_in_circle(x,y):
   #Assumes original angle is taken from the northing
@@ -51,11 +52,7 @@ def atan_in_circle(x,y):
     return 360-t
 
 def ang_in_circle(ang):
-  while ang<360:
-    ang+=360
-  while ang>360:
-    ang-=360
-  return ang
+  return ang - 360.0*floor(ang/360.0)
 
 def ang_in_hemicircle(ang):
   ang=ang_in_circle(ang)
