@@ -191,11 +191,6 @@ class angles_class:
 #    print "S2 Loc Projection: (" + str(s2x) + "," + str(s2y) + ")"
     print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
 
-#POS,  1000,  29.1755686N,  -4.0095257Ea,  0.00963371El,  FIT-TEST        
-#OBS:  1-1001,  FalseS,  90.2166666V,  352.175H,  FIT-TEST        
-#POS,  1002,  4.59433814N,  6.41467510Ea,  -0.4376595El,  FIT-TEST2       
-#OBS:  1-1003,  FalseS,  94.0527777V,  54.388889H,  FIT-TEST2 
-
 class stations_class:
   def __init__(self):
     self.stations=[]
