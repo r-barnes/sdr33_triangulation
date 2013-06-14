@@ -196,11 +196,6 @@ class angles_class:
 #POS,  1002,  4.59433814N,  6.41467510Ea,  -0.4376595El,  FIT-TEST2       
 #OBS:  1-1003,  FalseS,  94.0527777V,  54.388889H,  FIT-TEST2 
 
-#ang_in_hemicircle(ang)
-#def ang_in_circle(ang)
-
-#    inta1=s1_s2
-
 class stations_class:
   def __init__(self):
     self.stations=[]
@@ -231,7 +226,8 @@ class SDRFile:
       header=dat[0:2]
       derv=dat[2:4]
 
-      if header=='00':  #Header record, units defined, serial number, version number (Header)
+      #Header record, units defined, serial number, version number (Header)
+      if header=='00':
         version_number  =dat[ 4:20]
         serial_number   =dat[20:24]
         date            =dat[24:40]
@@ -241,10 +237,9 @@ class SDRFile:
         unit_temp       =dat[43]    #1=Celsius, 2=Fahrenheit
         unit_coor_prompt=dat[44]    #1=N-E-Elev, 2=E-N-Elev
         unit_always_one =dat[45]    #Why? No idea, it just is.
-    #    print "Header"
-    #    print "------"
-      elif header=='01':  #Instrument details (INSTR)
-    #    print "Instrument details: "
+
+      #Instrument details (INSTR)
+      elif header=='01':
         edm_type=dat[4]            #1=Manual, 4=DT4/5/5A/20, 6=SDM3E, 7=SDM3ER, 8=SDM3F, 9=SDM3FR, :=SET (older styles), ;=DT2/4, <=REDmini, ==SET with 2-way comms (newer style) and SET C series
         edm_desc         =dat[ 5:21]
         edm_serial       =dat[21:27]
@@ -255,7 +250,9 @@ class SDRFile:
         edm_offset       =dat[51:61]      #Distance
         reflector_offset =dat[61:71]      #Distance
         prism_const      =dat[71:81]      #mm
-      elif header=='02':  #Station details (STN)
+
+      #Station details (STN)
+      elif header=='02':
         ptnum      =dat[ 4: 8]
         northing   =dat[ 8:18]        #Distance
         easting    =dat[18:28]        #Distance
@@ -263,28 +260,29 @@ class SDRFile:
         theodheight=dat[38:48]        #+Distance
         desc       =dat[48:64]
         self.stations.add(ptnum,northing,easting,elevation,theodheight,desc)
-      elif header=='03':  #Target (staff) details (TRGET)
+
+      #Target (staff) details (TRGET)
+      elif header=='03':
         targetheight=dat[4:14]
-      elif header=='07':  #Back bearing details (BKB)
+
+      #Back bearing details (BKB)
+      elif header=='07':
         sourcept   =dat[ 4: 8]
         targetpt   =dat[ 8:12]
         bkb_azimuth=dat[12:22]
         bkb_horzobs=dat[22:32]
-    #    print " "
-    #    print "Backbearing Details"
-    #    print "---------------"
-    #    print "From " + sourcept + " to " + targetpt
-    #    print "Azimuth:\t" + bkb_azimuth
-    #    print "Horz obs:\t" + bkb_horzobs
-    #    print " "
-      elif header=='08':  #Coordinates (a point) (POS)
+
+      #Coordinates (a point) (POS)
+      elif header=='08':
         ptnum    =dat[ 4: 8]
         northing =dat[ 8:18]
         easting  =dat[18:28]
         elevation=dat[28:38]
         desc     =dat[38:54]
         print "POS,\t" + ptnum + ",\t" + northing + "N,\t" + easting + "Ea,\t" + elevation + "El,\t" + desc
-      elif header=='09' and (derv=='F1' or derv=='F2' or derv=='MD'):  #Observation (OBS)
+
+      #Observation (OBS)
+      elif header=='09' and (derv=='F1' or derv=='F2' or derv=='MD'):
         sourcept =dat[ 4: 8]
         targetpt =dat[ 8:12]
         slope    =dat[12:22]
@@ -292,11 +290,17 @@ class SDRFile:
         horzobs  =dat[32:42]
         desc     =dat[42:58]
         self.angles.add(sourcept,targetpt,slope,vertobs,horzobs,desc,bkb_azimuth,bkb_horzobs)
-      elif header=='09' and derv=='MC':  #Observation (OBS)
+
+      #Observation (OBS)
+      elif header=='09' and derv=='MC':
         pass
-      elif header=='10':  #Job identifier (JOB)
+
+      #Job identifier (JOB)
+      elif header=='10':
         jobid=dat[4:20]
-      elif header=='13':  #Note (NOTE)
+
+      #Note (NOTE)
+      elif header=='13':
         note=dat[4:64]
 
     self.initialized=True
