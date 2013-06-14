@@ -160,11 +160,10 @@ class angles_class:
     if not (t1 and t2):
       print "Target point not found!"
       return False
-    s1=stations.get(t1.getSource())
-    s2=stations.get(t2.getSource())
-    if not (s1 and s2):
-      print "Station not found!"
-      return False
+
+    s1=stations[t1.getSource()]
+    s2=stations[t2.getSource()]
+
 
 #    print "Using points (" + str(t1.getTarget()) + "," + str(t2.getTarget()) + ") with stations (" + str(s1.getStation()) + "," + str(s2.getStation()) + ")"
 
@@ -191,24 +190,11 @@ class angles_class:
 #    print "S2 Loc Projection: (" + str(s2x) + "," + str(s2y) + ")"
     print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
 
-class stations_class:
-  def __init__(self):
-    self.stations={}
-
-  def add(self,ptnum,northing,easting,elevation,theodheight,desc):  #Todo: What if they return to the station?!
-    self.stations[int(ptnum)] = station(ptnum,northing,easting,elevation,theodheight,desc)
-
-  def get(self,station):
-    if station in self.stations:
-      return self.stations[station]
-    else:
-      return False
-
 class SDRFile:
   def __init__(self, fname):
     self.initialized=False
     self.angles  =angles_class()
-    self.stations=stations_class()
+    self.stations={}
 
     try:
       fin = open(fname,'r')
@@ -254,7 +240,7 @@ class SDRFile:
         elevation  =dat[28:38]        #Distance
         theodheight=dat[38:48]        #+Distance
         desc       =dat[48:64]
-        self.stations.add(ptnum,northing,easting,elevation,theodheight,desc)
+        self.stations[int(ptnum)] = station(ptnum,northing,easting,elevation,theodheight,desc)
 
       #Target (staff) details (TRGET)
       elif header=='03':
