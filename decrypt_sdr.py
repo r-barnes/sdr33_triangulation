@@ -109,18 +109,6 @@ class angle:
   def display(self):
     print "OBS:\t" + str(self.sourcept) + "-" + str(self.targetpt) + ",\t" + str(self.slope) + "S,\t" + str(self.vertobs) + "V,\t" + str(self.getH()) + "H,\t" + self.desc
 
-  def getcH(self):
-    __out=self.horzobs
-    #The following transforms all angles to be relative to the northing line with negative values (0,-180) westing and positive values (0,180) easting
-    __out=__out+float(self.bkb_azimuth)-float(self.bkb_horzobs) #Correction applied to horziontal angle (may not be done as this is an "uncorrected observation")
-    if __out>180:
-      __out-=360
-    if __out<-180:
-      __out+=360
-    if __out>360:
-      __out-=360
-    return __out
-
   def getH(self): #Get the 360 H
     __out=self.horzobs
     #The following transforms all angles to be relative to the northing line with negative values (0,-180) westing and positive values (0,180) easting
