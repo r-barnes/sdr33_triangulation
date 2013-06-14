@@ -34,29 +34,29 @@ import math
 
 def atan_in_circle(x,y):
   #Assumes original angle is taken from the northing
-  #Returns tangent angle [0,360) 
+  #Returns tangent angle [0,2*Pi) 
   if x>0 and y==0:
-    return 90
+    return math.pi/2
   elif x<0 and y==0:
-    return 270
+    return 3*math.pi/2
 
-  t=abs(math.atan(x/y))*180/math.pi #'cause we work in degrees
+  t=abs(math.atan(x/y))
   if x>0 and y>0:
     return t
   elif x>0 and y<0:
-    return 180-t
+    return math.pi-t
   elif x<0 and y<0:
-    return 180+t
+    return math.pi+t
   elif x<0 and y>0:
-    return 360-t
+    return 2*math.pi-t
 
 def ang_in_circle(ang):
-  return ang - 360.0*math.floor(ang/360.0)
+  return ang - 2*math.pi*math.floor(ang/(2*math.pi))
 
 def ang_in_hemicircle(ang):
   ang=ang_in_circle(ang)
-  if ang>180:
-    ang=360-ang
+  if ang>math.pi:
+    ang=2*math.pi-ang
   return ang
 
 class station:
@@ -109,13 +109,13 @@ class angle:
     print "OBS:\t" + str(self.sourcept) + "-" + str(self.targetpt) + ",\t" + str(self.slope) + "S,\t" + str(self.vertobs) + "V,\t" + str(self.getH()) + "H,\t" + self.desc
 
   def getH(self): #Get the 360 H
-    __out=self.horzobs
+    __out=self.horzobs*math.pi/180
     #The following transforms all angles to be relative to the northing line with negative values (0,-180) westing and positive values (0,180) easting
-    __out=__out+float(self.bkb_azimuth)-float(self.bkb_horzobs) #Correction applied to horziontal angle (may not be done as this is an "uncorrected observation")
+    __out=__out+(float(self.bkb_azimuth)-float(self.bkb_horzobs))*math.pi/180 #Correction applied to horziontal angle (may not be done as this is an "uncorrected observation")
     if __out<0:
-      __out+=360
-    if __out>=360:
-      __out-=360
+      __out+=2*math.pi
+    if __out>=2*math.pi:
+      __out-=2*math.pi
     return __out
 
   def getTarget(self):
@@ -251,20 +251,20 @@ class SDRFile:
     dist =math.sqrt(xd**2+yd**2)
     s1_s2=atan_in_circle(xd,yd)
     ts1  =ang_in_hemicircle(t1.getH()-s1_s2)
-    ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(180+s1_s2))
-    inta =180-ts1-ts2
+    ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(math.pi+s1_s2))
+    inta =math.pi-ts1-ts2
 #    print "Station Angle:\t" + str(s1_s2) + ", Dist:\t" + str(dist)
 #    print "Target 1:\t" + str(t1.getH()) + ", Interior 1:\t" + str(ts1)
 #    print "Target 2:\t" + str(t2.getH()) + ", Interior 2:\t" + str(ts2)
 #    print "Unknown:\t" + str(inta)
-    ts1d =math.sin(ts2*math.pi/180)/math.sin(inta*math.pi/180)*dist
-    ts2d =math.sin(ts1*math.pi/180)/math.sin(inta*math.pi/180)*dist
+    ts1d =math.sin(ts2)/math.sin(inta)*dist
+    ts2d =math.sin(ts1)/math.sin(inta)*dist
 #    print "S1-Target Dist: " + str(ts1d)
 #    print "S2-Target Dist: " + str(ts2d)
-    s1x  =s1.getEasting() +ts1d*math.sin(t1.getH()*math.pi/180)
-    s1y  =s1.getNorthing()+ts1d*math.cos(t1.getH()*math.pi/180)
-    s2x  =s2.getEasting() +ts2d*math.sin(t2.getH()*math.pi/180)
-    s2y  =s2.getNorthing()+ts2d*math.cos(t2.getH()*math.pi/180)
+    s1x  =s1.getEasting() +ts1d*math.sin(t1.getH())
+    s1y  =s1.getNorthing()+ts1d*math.cos(t1.getH())
+    s2x  =s2.getEasting() +ts2d*math.sin(t2.getH())
+    s2y  =s2.getNorthing()+ts2d*math.cos(t2.getH())
 #    print "S1 Loc Projection: (" + str(s1x) + "," + str(s1y) + ")"
 #    print "S2 Loc Projection: (" + str(s2x) + "," + str(s2y) + ")"
     print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
