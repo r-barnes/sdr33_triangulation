@@ -193,16 +193,16 @@ class angles_class:
 
 class stations_class:
   def __init__(self):
-    self.stations=[]
+    self.stations={}
 
   def add(self,ptnum,northing,easting,elevation,theodheight,desc):  #Todo: What if they return to the station?!
-    self.stations += [ station(ptnum,northing,easting,elevation,theodheight,desc) ]
+    self.stations[int(ptnum)] = station(ptnum,northing,easting,elevation,theodheight,desc)
 
   def get(self,station):
-    for i in self.stations:
-      if i.getStation()==station:
-        return i
-    return False
+    if station in self.stations:
+      return self.stations[station]
+    else:
+      return False
 
 class SDRFile:
   def __init__(self, fname):
