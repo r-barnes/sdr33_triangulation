@@ -154,7 +154,7 @@ class angles_class:
         return i
     return False
 
-  def interpolate(self,target1,target2):
+  def interpolate(self,stations,target1,target2):
     t1=self.find(target1)
     t2=self.find(target2)
     if not (t1 and t2):
@@ -214,84 +214,92 @@ class stations_class:
         return i
     return False
 
-angles  =angles_class()
-stations=stations_class()
+class SDRFile:
+  def __init__(self, fname):
+    self.initialized=False
+    self.angles  =angles_class()
+    self.stations=stations_class()
 
-if len(sys.argv)<2:
-  print "Syntax: <PROG NAME> <FILE NAME>"
-  sys.exit(0)
+    try:
+      fin = open(fname,'r')
+    except:
+      sys.stderr.write("Failed to open file '" + fname + "'!\n")
+      return -1
 
-fin = open(sys.argv[1],'r')
+    for line in fin:
+      dat=line.strip()
+      header=dat[0:2]
+      derv=dat[2:4]
 
-for line in fin:
-  dat=line.strip()
-  header=dat[0:2]
-  derv=dat[2:4]
+      if header=='00':  #Header record, units defined, serial number, version number (Header)
+        version_number=dat[4:20]
+        serial_number=dat[20:24]
+        date=dat[24:40]
+        unit_angle=dat[40]      #1=Degrees, 2=Gons, 3=Quadrant bearings, 4=Mils
+        unit_dist=dat[41]      #1=Meters, 2=Feet
+        unit_pressure=dat[42]    #1=mmHg, 2=Inches mercury, 3=mbar (Millibars)
+        unit_temp=dat[43]      #1=Celsius, 2=Fahrenheit
+        unit_coor_prompt=dat[44]  #1=N-E-Elev, 2=E-N-Elev
+        unit_always_one=dat[45]    #Why? No idea, it just is.
+    #    print "Header"
+    #    print "------"
+      elif header=='01':  #Instrument details (INSTR)
+    #    print "Instrument details: "
+        edm_type=dat[4]            #1=Manual, 4=DT4/5/5A/20, 6=SDM3E, 7=SDM3ER, 8=SDM3F, 9=SDM3FR, :=SET (older styles), ;=DT2/4, <=REDmini, ==SET with 2-way comms (newer style) and SET C series
+        edm_desc=dat[5:21]
+        edm_serial=dat[21:27]
+        theodolite_desc=dat[27:43]
+        theodolite_serial=dat[43:49]
+        mounting_type=dat[49]        #1=Telescope, 2=Standards, 3=Not applicable
+        vertical_angle_op=dat[50]      #1=Zenith (measured downards from upwards vertical, 2=Horiz (measured upwards from horizontal). Applies to all vertical observation in OBS records which have not had any coorections applied (deriv code of F1, F2 or MD)
+        edm_offset=dat[51:61]        #Distance
+        reflector_offset=dat[61:71]      #Distance
+        prism_const=dat[71:81]        #mm
+      elif header=='02':  #Station details (STN)
+        ptnum=dat[4:8]
+        northing=dat[8:18]          #Distance
+        easting=dat[18:28]          #Distance
+        elevation=dat[28:38]        #Distance
+        theodheight=dat[38:48]        #+Distance
+        desc=dat[48:64]
+        self.stations.add(ptnum,northing,easting,elevation,theodheight,desc)
+      elif header=='03':  #Target (staff) details (TRGET)
+        targetheight=dat[4:14]
+      elif header=='07':  #Back bearing details (BKB)
+        sourcept=dat[4:8]
+        targetpt=dat[8:12]
+        bkb_azimuth=dat[12:22]
+        bkb_horzobs=dat[22:32]
+    #    print " "
+    #    print "Backbearing Details"
+    #    print "---------------"
+    #    print "From " + sourcept + " to " + targetpt
+    #    print "Azimuth:\t" + bkb_azimuth
+    #    print "Horz obs:\t" + bkb_horzobs
+    #    print " "
+      elif header=='08':  #Coordinates (a point) (POS)
+        ptnum=dat[4:8]
+        northing=dat[8:18]
+        easting=dat[18:28]
+        elevation=dat[28:38]
+        desc=dat[38:54]
+        print "POS,\t" + ptnum + ",\t" + northing + "N,\t" + easting + "Ea,\t" + elevation + "El,\t" + desc
+      elif header=='09' and (derv=='F1' or derv=='F2' or derv=='MD'):  #Observation (OBS)
+        sourcept  =dat[4:8]
+        targetpt  =dat[8:12]
+        slope    =dat[12:22]
+        vertobs    =dat[22:32]
+        horzobs    =dat[32:42]
+        desc    =dat[42:58]
+        self.angles.add(sourcept,targetpt,slope,vertobs,horzobs,desc,bkb_azimuth,bkb_horzobs)
+      elif header=='09' and derv=='MC':  #Observation (OBS)
+        pass
+      elif header=='10':  #Job identifier (JOB)
+        jobid=dat[4:20]
+      elif header=='13':  #Note (NOTE)
+        note=dat[4:64]
 
-  if header=='00':  #Header record, units defined, serial number, version number (Header)
-    version_number=dat[4:20]
-    serial_number=dat[20:24]
-    date=dat[24:40]
-    unit_angle=dat[40]      #1=Degrees, 2=Gons, 3=Quadrant bearings, 4=Mils
-    unit_dist=dat[41]      #1=Meters, 2=Feet
-    unit_pressure=dat[42]    #1=mmHg, 2=Inches mercury, 3=mbar (Millibars)
-    unit_temp=dat[43]      #1=Celsius, 2=Fahrenheit
-    unit_coor_prompt=dat[44]  #1=N-E-Elev, 2=E-N-Elev
-    unit_always_one=dat[45]    #Why? No idea, it just is.
-#    print "Header"
-#    print "------"
-  elif header=='01':  #Instrument details (INSTR)
-#    print "Instrument details: "
-    edm_type=dat[4]            #1=Manual, 4=DT4/5/5A/20, 6=SDM3E, 7=SDM3ER, 8=SDM3F, 9=SDM3FR, :=SET (older styles), ;=DT2/4, <=REDmini, ==SET with 2-way comms (newer style) and SET C series
-    edm_desc=dat[5:21]
-    edm_serial=dat[21:27]
-    theodolite_desc=dat[27:43]
-    theodolite_serial=dat[43:49]
-    mounting_type=dat[49]        #1=Telescope, 2=Standards, 3=Not applicable
-    vertical_angle_op=dat[50]      #1=Zenith (measured downards from upwards vertical, 2=Horiz (measured upwards from horizontal). Applies to all vertical observation in OBS records which have not had any coorections applied (deriv code of F1, F2 or MD)
-    edm_offset=dat[51:61]        #Distance
-    reflector_offset=dat[61:71]      #Distance
-    prism_const=dat[71:81]        #mm
-  elif header=='02':  #Station details (STN)
-    ptnum=dat[4:8]
-    northing=dat[8:18]          #Distance
-    easting=dat[18:28]          #Distance
-    elevation=dat[28:38]        #Distance
-    theodheight=dat[38:48]        #+Distance
-    desc=dat[48:64]
-    stations.add(ptnum,northing,easting,elevation,theodheight,desc)
-  elif header=='03':  #Target (staff) details (TRGET)
-    targetheight=dat[4:14]
-  elif header=='07':  #Back bearing details (BKB)
-    sourcept=dat[4:8]
-    targetpt=dat[8:12]
-    bkb_azimuth=dat[12:22]
-    bkb_horzobs=dat[22:32]
-#    print " "
-#    print "Backbearing Details"
-#    print "---------------"
-#    print "From " + sourcept + " to " + targetpt
-#    print "Azimuth:\t" + bkb_azimuth
-#    print "Horz obs:\t" + bkb_horzobs
-#    print " "
-  elif header=='08':  #Coordinates (a point) (POS)
-    ptnum=dat[4:8]
-    northing=dat[8:18]
-    easting=dat[18:28]
-    elevation=dat[28:38]
-    desc=dat[38:54]
-    print "POS,\t" + ptnum + ",\t" + northing + "N,\t" + easting + "Ea,\t" + elevation + "El,\t" + desc
-  elif header=='09' and (derv=='F1' or derv=='F2' or derv=='MD'):  #Observation (OBS)
-    sourcept  =dat[4:8]
-    targetpt  =dat[8:12]
-    slope    =dat[12:22]
-    vertobs    =dat[22:32]
-    horzobs    =dat[32:42]
-    desc    =dat[42:58]
-    angles.add(sourcept,targetpt,slope,vertobs,horzobs,desc,bkb_azimuth,bkb_horzobs)
-  elif header=='09' and derv=='MC':  #Observation (OBS)
-    pass
-  elif header=='10':  #Job identifier (JOB)
-    jobid=dat[4:20]
-  elif header=='13':  #Note (NOTE)
-    note=dat[4:64]
+    self.initialized=True
+
+  def interpolate_angles(self, target1, target2):
+    return self.angles.interpolate(self.stations,target1,target2)

@@ -12,6 +12,8 @@ if len(sys.argv)!=4:
 	print "Syntax: interpolate <FILE> <PT 1> <PT 2>"
 	sys.exit(0)
 
-from decrypt_sdr import *
+import decrypt_sdr
 
-angles.interpolate(int(sys.argv[2]),int(sys.argv[3]))
+sdrfile=decrypt_sdr.SDRFile(sys.argv[1])
+
+sdrfile.interpolate_angles(int(sys.argv[2]),int(sys.argv[3]))
