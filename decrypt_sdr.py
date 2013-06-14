@@ -223,8 +223,8 @@ if len(sys.argv)<2:
 
 fin = open(sys.argv[1],'r')
 
-for datum in fin:
-  dat=datum.replace("\n",'')
+for line in fin:
+  dat=line.strip()
   header=dat[0:2]
   derv=dat[2:4]
 
