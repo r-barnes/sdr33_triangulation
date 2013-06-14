@@ -65,20 +65,20 @@ def ang_in_hemicircle(ang):
 
 class station:
   def __init__(self,ptnum,northing,easting,elevation,theodheight,desc):
-    self.ptnum=int(ptnum)
-    self.northing=float(northing)
-    self.easting=float(easting)
-    self.elevation=float(elevation)
+    self.ptnum      =int(ptnum)
+    self.northing   =float(northing)
+    self.easting    =float(easting)
+    self.elevation  =float(elevation)
     self.theodheight=float(theodheight)
-    self.desc=desc
+    self.desc       =desc
 
   def display(self):
     print " "
     print "Station " + str(ptnum) + " Details"
     print "---------------"
-    print "Northing:\t\t" + str(self.northing)
-    print "Easting:\t\t" + str(self.easting)
-    print "Elevation:\t\t" + str(self.elevation)
+    print "Northing:\t\t"        + str(self.northing)
+    print "Easting:\t\t"         + str(self.easting)
+    print "Elevation:\t\t"       + str(self.elevation)
     print "Theodolite Height:\t" + str(self.theodheight)
     print "Desc: \t" + desc
     print " "
