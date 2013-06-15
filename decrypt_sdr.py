@@ -246,9 +246,10 @@ class SDRFile:
 
 #    print "Using points (" + str(t1.getTarget()) + "," + str(t2.getTarget()) + ") with stations (" + str(s1.getStation()) + "," + str(s2.getStation()) + ")"
 
-    xd   =s2.getEasting() -s1.getEasting()
-    yd   =s2.getNorthing()-s1.getNorthing()
-    dist =math.sqrt(xd**2+yd**2)
+    xd   =s2.getEasting() -s1.getEasting()      #Easting  distance between stations
+    yd   =s2.getNorthing()-s1.getNorthing()     #Northing distance between stations
+    dist =math.sqrt(xd**2+yd**2)                #Distance between stations
+
     s1_s2=atan_in_circle(xd,yd)
     ts1  =ang_in_hemicircle(t1.getH()-s1_s2)
     ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(math.pi+s1_s2))
