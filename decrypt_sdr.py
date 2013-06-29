@@ -40,7 +40,6 @@ def atan2c(y,x):
   if (ang<0):           #Remap to the [0,2*Pi) range
     ang=2*math.pi+ang
   return ang
-  
 
 def ang_in_circle(ang):
   return math.fmod(abs(ang),360.0)
@@ -244,21 +243,35 @@ class SDRFile:
 
     s1_s2=atan2c(xd,yd)                         #Angle from station 1 to station 2 [0,2*Pi), 0 is North
 
+    #Interior angle between line connecting stations (from s1) and line defined by observation angle from station 1
     ts1  =ang_in_hemicircle(t1.getH()-s1_s2)
+
+    #Interior angle between line connecting stations (from s2) and line defined by observation angle from station 2
     ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(math.pi+s1_s2))
+
+    #Third interior angle of the triangle formed by s1, s2, and the observed point
     inta =math.pi-ts1-ts2
+
 #    print "Station Angle:\t" + str(s1_s2) + ", Dist:\t" + str(dist)
 #    print "Target 1:\t" + str(t1.getH()) + ", Interior 1:\t" + str(ts1)
 #    print "Target 2:\t" + str(t2.getH()) + ", Interior 2:\t" + str(ts2)
 #    print "Unknown:\t" + str(inta)
+
+    #Use the Law of Sines to determine distance from s1 to observed point
     ts1d =math.sin(ts2)/math.sin(inta)*dist
+    #Use the Law of Sines to determine distance from s2 to observed point
     ts2d =math.sin(ts1)/math.sin(inta)*dist
+
 #    print "S1-Target Dist: " + str(ts1d)
 #    print "S2-Target Dist: " + str(ts2d)
+
+    #Use segment length and angle to find location of observed point
     s1x  =s1.getEasting() +ts1d*math.sin(t1.getH())
     s1y  =s1.getNorthing()+ts1d*math.cos(t1.getH())
     s2x  =s2.getEasting() +ts2d*math.sin(t2.getH())
     s2y  =s2.getNorthing()+ts2d*math.cos(t2.getH())
+
 #    print "S1 Loc Projection: (" + str(s1x) + "," + str(s1y) + ")"
 #    print "S2 Loc Projection: (" + str(s2x) + "," + str(s2y) + ")"
+
     print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
