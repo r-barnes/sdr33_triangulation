@@ -29,26 +29,11 @@
 #TS: Automatic time stamp note
 #TV: Traverse program
 
+#The SDR33 assumes horizontal angles and azimuths are always measured turning to the right.
+#0.000 degrees azimuth is North
+
 import sys
 import math
-
-def atan_in_circle(x,y):
-  #Assumes original angle is taken from the northing
-  #Returns tangent angle [0,2*Pi) 
-  if x>0 and y==0:
-    return math.pi/2
-  elif x<0 and y==0:
-    return 3*math.pi/2
-
-  t=abs(math.atan(x/y))
-  if x>0 and y>0:
-    return t
-  elif x>0 and y<0:
-    return math.pi-t
-  elif x<0 and y<0:
-    return math.pi+t
-  elif x<0 and y>0:
-    return 2*math.pi-t
 
 def ang_in_circle(ang):
   return ang - 2*math.pi*math.floor(ang/(2*math.pi))
@@ -250,7 +235,8 @@ class SDRFile:
     yd   =s2.getNorthing()-s1.getNorthing()     #Northing distance between stations
     dist =math.sqrt(xd**2+yd**2)                #Distance between stations
 
-    s1_s2=atan_in_circle(xd,yd)
+    s1_s2=math.atan2(xd,yd)                     #Angle from station 1 to station 2
+
     ts1  =ang_in_hemicircle(t1.getH()-s1_s2)
     ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(math.pi+s1_s2))
     inta =math.pi-ts1-ts2
