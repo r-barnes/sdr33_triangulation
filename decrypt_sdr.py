@@ -43,7 +43,7 @@ def atan2c(y,x):
   
 
 def ang_in_circle(ang):
-  return ang - 2*math.pi*math.floor(ang/(2*math.pi))
+  return math.fmod(abs(ang),360.0)
 
 def ang_in_hemicircle(ang):
   ang=ang_in_circle(ang)
