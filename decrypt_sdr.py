@@ -35,6 +35,13 @@
 import sys
 import math
 
+def atan2c(y,x):
+  ang=math.atan2(y,x)   #Calculate atan2
+  if (ang<0):           #Remap to the [0,2*Pi) range
+    ang=2*math.pi+ang
+  return ang
+  
+
 def ang_in_circle(ang):
   return ang - 2*math.pi*math.floor(ang/(2*math.pi))
 
@@ -235,7 +242,7 @@ class SDRFile:
     yd   =s2.getNorthing()-s1.getNorthing()     #Northing distance between stations
     dist =math.sqrt(xd**2+yd**2)                #Distance between stations
 
-    s1_s2=math.atan2(xd,yd)                     #Angle from station 1 to station 2
+    s1_s2=atan2c(xd,yd)                         #Angle from station 1 to station 2 [0,2*Pi), 0 is North
 
     ts1  =ang_in_hemicircle(t1.getH()-s1_s2)
     ts2  =ang_in_hemicircle(t2.getH()-ang_in_circle(math.pi+s1_s2))
