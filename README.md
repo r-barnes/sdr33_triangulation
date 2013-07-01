@@ -2,7 +2,7 @@ Sokkia SDR 33 Point Triangulation
 =================================
 
 This repository contains code for reading an SDR33 data logger file and using
-angular observations recorded there in to triangulate the position of points
+the angular observations recorded therein to triangulate the position of points
 of interest.
 
 Explanation
