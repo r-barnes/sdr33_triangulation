@@ -81,7 +81,11 @@ which are to be used to triangulate the position of the far side of the river
 channel, which was otherwise uncrossable. When taking data in the field, each
 pair of points should be noted so this file can later be created.
 
-
-The blue squares depicte the four station locations used to 
+The output of running the program is a comma-separated value file where station
+locations, prism-observed points, and triangulated points are all noted. An
+example based on the aforementioned data is shown below. The blue squares are
+the station locations from which the triangulations were made, the red diamonds
+are points surveyed with the prism, and the yellow triangles are the
+triangulated points.
 
 ![Example of graphed output of the triangulation program](channel.png)
