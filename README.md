@@ -74,11 +74,13 @@ Examples of two possible setups are depicted below.
 Example
 =======
 
-The file [example.sdr](example.sdr)
+The file [example.sdr](example.sdr) contains SDR33 survey data of a river
+channel on the Olympic Peninsula. A second file,
+[example-point-pairs](example-point-pairs) contains a list of paired angles
+which are to be used to triangulate the position of the far side of the river
+channel, which was otherwise uncrossable. When taking data in the field, each
+pair of points should be noted so this file can later be created.
 
-The image below depicts the results of processing an SDR 33 file. The data used
-was taken to determine the location of the far side of a river channel on the
-Olympic Peninsula.
 
 The blue squares depicte the four station locations used to 
 
