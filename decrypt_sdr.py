@@ -70,6 +70,9 @@ class station:
     print "Desc: \t" + desc
     print " "
 
+  def loc(self):
+    print "%f,%f,station" % (self.easting, self.northing)
+
   def getStation(self):
     return self.ptnum
 
@@ -133,6 +136,7 @@ class SDRFile:
     self.initialized=False
     self.angles  =angles_class()
     self.stations={}
+    self.points = []
 
     try:
       fin = open(fname,'r')
@@ -198,7 +202,8 @@ class SDRFile:
         easting  =dat[18:28]
         elevation=dat[28:38]
         desc     =dat[38:54]
-        print "POS,\t" + ptnum + ",\t" + northing + "N,\t" + easting + "Ea,\t" + elevation + "El,\t" + desc
+        self.points.append("%s,%s,point" % (easting, northing))
+#        print "POS,\t" + ptnum + ",\t" + northing + "N,\t" + easting + "Ea,\t" + elevation + "El,\t" + desc
 
       #Observation (OBS)
       elif header=='09' and (derv=='F1' or derv=='F2' or derv=='MD'):
@@ -223,6 +228,14 @@ class SDRFile:
         note=dat[4:64]
 
     self.initialized=True
+
+  def print_stations(self):
+    for i in self.stations:
+      self.stations[i].loc()
+
+  def print_points(self):
+    for i in self.points:
+      print i
 
   def interpolate_angles(self, target1, target2):
     t1=self.angles.find(target1)
@@ -274,4 +287,5 @@ class SDRFile:
 #    print "S1 Loc Projection: (" + str(s1x) + "," + str(s1y) + ")"
 #    print "S2 Loc Projection: (" + str(s2x) + "," + str(s2y) + ")"
 
-    print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
+#    print str(target1) + "," + str(target2) + "," + str(s1x) + "," + str(s1y)
+    print "%f,%f,triangulated" % (s1x, s1y)
