@@ -65,11 +65,11 @@ Examples of two possible setups are depicted below.
 
 **Example One**
 
-![Layout of triangulation mathematics](math1.png)
+![Layout of triangulation mathematics](doc/math1.png)
 
 **Example Two**
 
-![An alternative layout of triangulation mathematics](math2.png)
+![An alternative layout of triangulation mathematics](doc/math2.png)
 
 Example
 =======
@@ -88,4 +88,24 @@ the station locations from which the triangulations were made, the red diamonds
 are points surveyed with the prism, and the yellow triangles are the
 triangulated points.
 
-![Example of graphed output of the triangulation program](channel.png)
+![Example of graphed output of the triangulation program](doc/channel.png)
+
+The example can be run by typing
+
+    ./interpolate.py example.sdr example-point-pairs
+
+giving the following (truncated) output:
+
+    0.000000,0.000000,station
+    137.031000,69.303000,station
+    -168.036000,-14.792000,station
+    -307.399000,-2.000000,station
+    -4.0095257,29.1755686,point
+    6.41467510,4.59433814,point
+    -307.39860,-2.0003779,point
+    5.424803,3.885369,triangulated
+    -3.994213,29.064147,triangulated
+    553.594964,275.911747,triangulated
+    512.895727,254.138915,triangulated
+    514.745047,225.243295,triangulated
+    236.515028,51.532583,triangulated
